@@ -122,7 +122,7 @@ function test_gradients(
             check_equal_leaves(g, g_fd; rtol, atol)
         end
 
-        if test_mooncake
+        if test_mooncake && !(graph.graph isa AbstractSparseMatrix) # Mooncake friendly tangents currently error on sparse graph internals
             # Mooncake gradient with respect to input via Flux integration, compared against Zygote.
             loss_mc_x = (xs...) -> loss(f, graph, xs...)
             y_mc, g_mc = Flux.withgradient(loss_mc_x, Flux.AutoMooncake(), xs...)
@@ -153,7 +153,7 @@ function test_gradients(
             check_equal_leaves(g, g_fd; rtol, atol)
         end
 
-        if test_mooncake
+        if test_mooncake && !(graph.graph isa AbstractSparseMatrix) # Mooncake friendly tangents currently error on sparse graph internals
             # Mooncake gradient with respect to f via Flux integration, compared against Zygote.
             y_mc, g_mc = Flux.withgradient(f -> loss(f, graph, xs...), Flux.AutoMooncake(), f)
             @assert isapprox(y, y_mc; rtol, atol)
