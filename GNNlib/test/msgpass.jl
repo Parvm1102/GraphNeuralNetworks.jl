@@ -161,6 +161,15 @@ end
         end
     end
 
+    @testset "e_mul_xj mean (scalar edge weight)" begin
+        # Same spmm fast path as above, with the mean aggregation rule.
+        for g in TEST_GRAPHS
+            e = rand(Float32, g.num_edges)
+            f(g, x, e) = propagate(e_mul_xj, g, mean; xj = x, e)
+            test_gradients(f, g, g.x, e; test_grad_f=false)
+        end
+    end
+
     @testset "w_mul_xj +" begin
         for g in TEST_GRAPHS
             w = rand(Float32, g.num_edges)
